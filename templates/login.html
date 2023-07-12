@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/meu_estilo.css')}}">
+    <title>Login</title>
+
+</head>
+<body>
+  <div id="erro-code" style="display: none;">{{erro_code}}</div> 
+  <div class="no-alert"></div>
+	<div class="container-login">
+    <h1 class="titulo">Entrar</h1>
+    <form method="post">
+      <div class="mb-3">
+        <label for="chave" class="form-label">Chave da API</label>
+        <input type="text" class="form-control" name="chave" aria-describedby="emailHelp" required="required">
+      </div>
+      <div class="mb-3">
+        <label for="chaveSecreta" class="form-label">Chave secreta</label>
+        <input type="password" class="form-control" name="chaveSecreta" required="required">
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" name="email" required="required">
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary" onclick="tela_carregamento()">Entrar</button>
+        
+      </form>
+    </div>
+    
+    <div class="area-janela-confirmacao-login" style="display: none;">
+      <div class="janela-confirmacao-login">
+          <div class="header-janela-login">
+              <div class="titulo-janela-login"></div>
+          </div>
+          <form method="post">
+            <div class="content-janela-login">
+                <div class="texto-janela-login"></div>
+                <div class="botoes-janela-login">
+                    <button class="bt-confirma-janela-login" type="submit" >Tentar novamente</button></form>  
+                </div>
+            </div>
+          </form>
+      </div>
+  </div>
+  
+    <div class="tela-carregamento" id="tela-carregamento" style="display: none;">
+        <div class="carregando" id="carregando"></div>
+    </div>
+</body>
+<script>
+  var erro_code = document.getElementById("erro-code").innerText;
+  if (erro_code == -2008){
+    var alerta = document.getElementsByClassName("no-alert")[0]
+    alerta.className = "alert";
+    alerta.innerText = "Chave da API inválida";
+  }
+
+  if (erro_code == -1022){
+    var alerta = document.getElementsByClassName("no-alert")[0]
+    alerta.className = "alert";
+    alerta.innerText = "Chave secreta inválida";
+  }
+
+  if (erro_code == -2015){
+    document.getElementsByClassName("area-janela-confirmacao-login")[0].style = "display: flex";
+    document.getElementsByClassName("titulo-janela-login")[0].innerText = "Erro"
+    document.getElementsByClassName("texto-janela-login")[0].innerText = "Ip inválido! Verifique se o ip do dipositivo está adicionado a lista de restrição de acesso"
+  }
+
+  if (erro_code == -1021){
+    document.getElementsByClassName("area-janela-confirmacao-login")[0].style = "display: flex";
+    document.getElementsByClassName("titulo-janela-login")[0].innerText = "Erro"
+    document.getElementsByClassName("texto-janela-login")[0].innerText = "O horário do dispositivo está descincronizado com o servidor, para realizar a comunicação com o servidor é necessário ajustar o horario"
+  }
+
+  function tela_carregamento(){
+    document.getElementById("tela-carregamento").style = "display: flex";
+  }
+</script>
+</html>

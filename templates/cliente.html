@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/meu_estilo.css')}}">
+    <title>Login</title>
+
+</head>
+<body>
+    <form method="post">
+        <input type="hidden" id="voltar" name="voltar" value="0">
+        <button type="submit" class="pg-pesquisar bt-externo voltar" >Voltar</button>
+    </form>
+
+    <div class="container-cliente">
+
+        <div class="pg-cliente-parte-superior">
+            <label>
+                <h1>Dados do Cliente</h1> 
+            </label>
+            <div class="pg-cliente-botoes">
+                <button class="bt-editar" type="button" onclick="editar(event)"></button>
+                <button class="bt-excluir" type="button" onclick="abrir_janela()"></button>
+            </div>
+        </div>
+        <div>
+            <form method="post">
+                <input type="hidden" name="id" value={{cliente_selecionado[6]}}>
+                <input type="hidden" id="hash-antigo" name="hash_carteira_antiga" value={{cliente_selecionado[1]}}>
+                <input type="hidden" name="acao" value="-1">
+                <div id="nome-antigo" style="display: none;">{{cliente_selecionado[0]}}</div>
+                <div id="valor-antigo" style="display: none;">{{cliente_selecionado[2]}}</div>
+                <div id="dia-antigo" style="display: none;">{{cliente_selecionado[3]}}</div>
+                <div id="email-antigo" style="display: none;">{{cliente_selecionado[4]}}</div>
+
+                <div class="dados">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" name="nome" id="nome" class="form-control inativo" maxlength=40 required disabled>
+                </div>
+
+                <div class="dados">
+                    <label for="email">E-mail</label>
+                    <input type="email" name="email" id="email" class="form-control inativo" maxlength=40 required disabled>
+                </div>
+
+                <div class="dados">
+                    <label for="hash_carteira">Endereço da carteira</label>
+                    <input type="text" name="hash_carteira" id="hash" maxlength=42 minlength=42 class="form-control inativo" required disabled>
+                </div>
+                
+                <div class="dados">        
+                    <label for="valor_contrato">Valor do contrato</label>
+                    <input type="text" name="valor_contrato" id="valor" onkeyup="formatar_moeda()" class="form-control inativo" maxlength=13 required disabled>
+                </div>
+
+                <div class="dados">
+                    <label for="dia_pagamento">Dia do pagamento</label>
+                    <br>
+                    <select name="dia_pagamento" class="inativo" id="dia_pagamento" onchange="imprime_escolha(event)" disabled>
+                        <option name="item" value="10">Dia 10</option>
+                        <option name="item" value="15">Dia 15</option>
+                        <option name="item" value="20">Dia 20</option>
+                        <option name="item" value="30">Dia 30</option>
+                    </select>
+                </div>
+
+                <br>
+                <button type="submit" class="btn btn-primary inativo" style="display: none;" onclick="salvar()" disabled>Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="area-janela-confirmacao-excluir" style="display: none;">
+        <div class="janela-confirmacao-excluir">
+            <div class="header-janela-excluir">
+                <div class="titulo-janela-excluir">Excluir cliente</div>
+                <button class="bt-fechar-janela-excluir" onclick="cancela()"></button>
+            </div>
+            <form method="post">
+                <div class="content-janela-excluir">
+                    <input type="hidden" name="id" value={{cliente_selecionado[6]}}>
+                    <input type="hidden" name="acao" value="-1">
+                    <div class="texto-janela-excluir">Deseja excluir permanentemente esse cliente?</div>
+                    <div class="botoes-janela-excluir">
+                        <button class="bt-confirma-janela-excluir" type="submit" onclick="excluir()">Ok</button></form>  
+                        <button class="bt-cancela-janela-excluir" type="button" onclick="cancela()">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+</body>
+<script>
+    carrega_dados();
+
+    function carrega_dados(){
+        var nome  = document.getElementById('nome-antigo').innerText;
+        var hash  = document.getElementById('hash-antigo').value;
+        var valor = document.getElementById('valor-antigo').innerText.replace(".","");
+        var dia   = document.getElementById('dia-antigo').innerText;
+        var email = document.getElementById('email-antigo').innerText;
+
+        document.getElementById('nome').value = nome;
+        document.getElementById('hash').value = hash;
+        document.getElementById('valor').value = valor;
+        document.getElementById('email').value = email;
+        var lista_itens = document.getElementsByName('item');
+        for(var i = 0; i < lista_itens.length; i++){
+            if (lista_itens[i].value == dia)
+                lista_itens[i].selected = true;
+        }
+
+        formatar_moeda();
+    }
+    
+
+    function formatar_moeda() {
+        var elemento = document.getElementById('valor');
+        var valor = elemento.value;
+        
+
+        valor = valor + '';
+        valor = parseInt(valor.replace(/[\D]+/g, ''));
+        valor = valor + '';
+        valor = valor.replace(/([0-9]{2})$/g, ",$1");
+
+        if (valor.length > 6) {
+            valor = valor.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+        }
+
+        elemento.value = valor;
+        if(valor == 'NaN') elemento.value = '';
+        
+    }
+
+
+    function editar(evt){
+        if (evt.currentTarget.className.includes("selecionado")){
+            evt.currentTarget.className = evt.currentTarget.className.replace(" selecionado","");
+
+            var lista_elementos = document.getElementsByClassName("ativo");
+            lista_elementos[lista_elementos.length-1].style = "display: none;";
+            for(var i = lista_elementos.length-1; i >= 0; i--){
+                lista_elementos[i].disabled = true;
+                lista_elementos[i].className = lista_elementos[i].className.replace("ativo","inativo");
+            }
+            carrega_dados();
+        }else{
+            evt.currentTarget.className += " selecionado";
+
+            var lista_elementos = document.getElementsByClassName("inativo");
+            lista_elementos[lista_elementos.length-1].style = "display: block;";
+            for(var i = lista_elementos.length-1; i >= 0; i--){
+                lista_elementos[i].disabled = false;
+                lista_elementos[i].className = lista_elementos[i].className.replace("inativo","ativo");
+            }
+        }
+    }
+
+    function salvar(){
+        var input = document.getElementsByName('acao');
+        input[0].value = "0";
+        input[1].value = "0";
+    }
+
+    function abrir_janela(){
+        var area_janela = document.getElementsByClassName("area-janela-confirmacao-excluir")[0];
+        area_janela.style = "display: flex;";
+    }
+
+    function excluir(){
+        var input = document.getElementsByName('acao');
+        input[0].value = "1";
+        input[1].value = "1";
+    }
+
+    function cancela(){
+        var area_janela = document.getElementsByClassName("area-janela-confirmacao-excluir")[0];
+        area_janela.style = "display: none;";
+    }
+</script>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/meu_estilo.css')}}">
+    <title>Pagamento realizado</title>
+</head>
+<body>
+    <div class="sucesso" id="sucesso" style="display: none;">
+        <div class="img-sucesso"></div>
+        <font color="#32ba7c"><h1> Pagamentos realizados com sucesso </h1></font>
+    </div>
+    <div class="falha" id="falha" style="display: none;">
+        <div class="img-falha"></div>
+        <font color="#e21b1b"><h1>Houve falha na realização de algum(ns) pagamento(s)</h1></font>
+    </div>
+
+    <form method="post">
+        <input type="hidden" id="pagina" name="pagina" value="-1">
+        <button type="submit" id="bt-voltar" class="pg-pagamento-realizado-bt-voltar" onclick="bt_voltar()">Voltar</button>
+        <button type="submit" id="bt-historico" class="pg-pagamento-realizado-bt-historico" onclick="bt_historico()">Historico</button>
+    </form>
+
+
+    <div class="tela-carregamento" id="tela-carregamento" style="display: none;">
+        <div class="carregando" id="carregando"></div>
+    </div>
+</body>
+<script>
+    var erro = "{{erro}}"
+
+    if (erro == "-1"){
+        document.getElementById("sucesso").style = "display: flex;";
+        document.getElementById("bt-voltar").style = "background-color: #32ba7c;"
+        document.getElementById("bt-historico").style = "background-color: #32ba7c;"
+    }
+    else if (erro == "0"){
+        document.getElementById("falha").style = "display: flex;";
+        document.getElementById("bt-voltar").style = "background-color: #e21b1b;"
+        document.getElementById("bt-historico").style = "background-color: #e21b1b;"
+    }
+
+
+    function bt_voltar(){
+        document.getElementById("pagina").value = 0;
+        document.getElementById("tela-carregamento").style = "display: flex;";
+    }
+
+    function bt_historico(){
+        document.getElementById("pagina").value = 1;
+    }
+</script>
+</html>

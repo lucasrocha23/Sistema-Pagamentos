@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/meu_estilo.css')}}">
+    <title>Página inicial</title>
+
+    </script>
+</head>
+<body>
+    <div id="bd" style="display: none;">{% for cliente in todos: %}{% for dado in cliente: %}{{dado}}¬{% endfor %}§{% endfor %}</div>
+
+	<div class="container-home"> 
+        <div class="pg-home-parte-superior">
+            <div class="valores-cotacoes">
+                <div class="texto-botao">
+                    <div>Valor total em BTC</div>
+                    <button type="button" class="bt revela-esconde-valores view" onclick="revela_esconde_valores(this)"></button>
+                </div>
+                <h3 name="valor"><strong>{{saldoBTC}}</strong> </h3>
+                <h6 name="valor">{{convercao_USDT}}</h6>
+                <h6 name="valor">{{convercao_BRL}}</h6>
+            </div>
+            <div class="botoes">
+                <form method="post" action="/home" enctype="multipart/form-data">
+                    <div class="area-botoes">
+                        <input type="hidden" id="pagina" name="pagina" value="-1">
+                        <input id="arquivo" name="arquivo" type="file" autocomplete="off" style="display: none;" onchange="importarSubmit(event)"/>
+                        <button type="submit" class="bt add" onclick="redirec_add()"></button>
+                        <button type="submit" class="bt pesq" onclick="redirec_pesq()"></button>
+                        <button type="submit" class="bt hist" onclick="redirec_hist()"></button>
+                        <div class="botoes-importar-exportar">
+                            <button type="button" class="bt importar" onclick="importar()">importar</button>
+                            <button type="submit" id="importar_submit" style="display: none;" ></button>
+                            <button type="button" class="bt exportar" onclick="exportar()">exportar</button>
+                        </div>
+                    </div>
+                    <div class="area-pagamento">
+                        <div class="valor-total" id="valor-total"></div>
+                        <button class="bt-pagar" type="button" onclick="redirec_pagar()" disabled>pagar</button>
+                        <button type="submit" id="pagar-submit"  style="display: none;"></button>
+                        <input type="hidden" id="id_clientes" name="id_clientes">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="pg-home-parte-inferior">
+            <div class="abas">
+                <button class="link-aba 2" onclick="selecionar_aba(event, 'dia10')" id="default">dia 10</button>
+                <button class="link-aba 3" onclick="selecionar_aba(event, 'dia15')">dia 15</button>
+                <button class="link-aba 4" onclick="selecionar_aba(event, 'dia20')">dia 20</button>
+                <button class="link-aba 5" onclick="selecionar_aba(event, 'dia30')">dia 30</button>
+            </div>
+
+            <div class="opcoes">
+                <div class="opcoes-esquerdo">
+                    <input type="checkbox" id="checkbox-seleciona-todos" onclick="selcionar_todos(event)">
+                    <div>selecionados:</div>
+                    <div id="selecionados">0</div>
+                </div>
+                <div class="opcoes-direito">
+                    <input type="text" class="porcentagem" >
+                    <button id="bt-aplicar-todos" class="bt opcoes" onclick="aplicar_todos(event)">Aplicar p/ todos</button>
+                </div>
+            </div>
+
+              
+            <div id="dia10" class="conteudo-aba ativo">
+                {% for cliente in dia10: %}
+                    <div class="cliente">
+                        <div>
+                            <form method="post">
+                                <input type="checkbox" class="" onchange="verificar_checagem(event)">
+                                <input type="hidden" class="" value={{cliente[6]}}>
+                                <button type="submit" class="bt-cliente" onclick="cliente_selecionado(event)" >{{cliente[0]}}</button>
+                            </form>
+                        </div>
+                        <div class="cliente-direito" id="{{cliente[6]}}">
+                            <script>
+                                var nome = "{{cliente[0]}}";
+                                var dia_pagamento = parseInt("{{cliente[3]}}");
+                                var data_bd = "{{cliente[5]}} 00:00:00"; //{{cliente[5]}}
+                                var data_atual = new Date();
+
+                                if(!(data_bd.includes("None"))){
+                                    data_bd   = data_bd = new Date(data_bd);
+                                    dia_atual = data_atual.getDate();
+                                    mes_atual = data_atual.getMonth();
+                                    dia_pago  = data_bd.getDate();
+                                    mes_pago  = data_bd.getMonth();
+
+                                    //verificando atraso
+                                    if(((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & dia_atual > dia_pagamento) || mes_atual > mes_pago+1 || (mes_pago == 10 & mes_atual >= 0) ||  (mes_pago == 11 & mes_atual >= 1)){
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-atrasado";
+                                        div.innerHTML = "<font color='#fd6e5e'>atrasado</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //verificando em aberto
+                                    else if((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & ((dia_atual >= dia_pagamento-2 & dia_atual <= dia_pagamento) || (mes_atual == 1 & dia_atual >=26 & dia_pagamento == 30)) ){
+                                        var div = document.createElement("div");
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //sobra o que foi pago
+                                    else{
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-realizado";
+                                        div.innerHTML = "<font color='#02bc7d'>pago</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+
+                                }else{
+                                    var div = document.createElement("div");
+                                    document.getElementById("{{cliente[6]}}").appendChild(div);
+                                }
+                            </script>
+                            <input type="text" class="porcentagem" onkeyup="digitar_valor(event)">
+                            <div class="valor-pagar">R$ 0,00</div>
+                            <div style="display: none;">{{cliente[2]}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+              
+            <div id="dia15" class="conteudo-aba">
+                {% for cliente in dia15: %}
+                    <div class="cliente">
+                        <div>
+                            <form method="post">
+                                <input type="checkbox" class="" onchange="verificar_checagem(event)">
+                                <input type="hidden" class="" value={{cliente[6]}}>
+                                <button type="submit" class="bt-cliente" onclick="cliente_selecionado(event)" >{{cliente[0]}}</button>
+                            </form>
+                        </div>
+                        <div class="cliente-direito" id="{{cliente[6]}}">
+                            <script>
+                                var nome = "{{cliente[0]}}";
+                                var dia_pagamento = parseInt("{{cliente[3]}}");
+                                var data_bd = "{{cliente[5]}} 00:00:00"; //{{cliente[5]}}
+                                var data_atual = new Date();
+
+                                if(!(data_bd.includes("None"))){
+                                    data_bd   = data_bd = new Date(data_bd);
+                                    dia_atual = data_atual.getDate();
+                                    mes_atual = data_atual.getMonth();
+                                    dia_pago  = data_bd.getDate();
+                                    mes_pago  = data_bd.getMonth();
+
+                                    //verificando atraso
+                                    if(((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & dia_atual > dia_pagamento) || mes_atual > mes_pago+1 || (mes_pago == 10 & mes_atual >= 0) ||  (mes_pago == 11 & mes_atual >= 1)){
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-atrasado";
+                                        div.innerHTML = "<font color='#fd6e5e'>atrasado</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //verificando em aberto
+                                    else if((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & ((dia_atual >= dia_pagamento-2 & dia_atual <= dia_pagamento) || (mes_atual == 1 & dia_atual >=26 & dia_pagamento == 30)) ){
+                                        var div = document.createElement("div");
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //sobra o que foi pago
+                                    else{
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-realizado";
+                                        div.innerHTML = "<font color='#02bc7d'>pago</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+
+                                }else{
+                                    var div = document.createElement("div");
+                                    document.getElementById("{{cliente[6]}}").appendChild(div);
+                                }
+                            </script>
+                            <input type="text" class="porcentagem" onkeyup="digitar_valor(event)">
+                            <div class="valor-pagar">R$ 0,00</div>
+                            <div style="display: none;">{{cliente[2]}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="dia20" class="conteudo-aba">
+                {% for cliente in dia20: %}
+                    <div class="cliente">
+                        <div>
+                            <form method="post">
+                                <input type="checkbox" class="" onchange="verificar_checagem(event)">
+                                <input type="hidden" class="" value={{cliente[6]}}>
+                                <button type="submit" class="bt-cliente" onclick="cliente_selecionado(event)" >{{cliente[0]}}</button>
+                            </form>
+                        </div>
+                        <div class="cliente-direito" id="{{cliente[6]}}">
+                            <script>
+                                var nome = "{{cliente[0]}}";
+                                var dia_pagamento = parseInt("{{cliente[3]}}");
+                                var data_bd = "{{cliente[5]}} 00:00:00"; //{{cliente[5]}}
+                                var data_atual = new Date();
+
+                                if(!(data_bd.includes("None"))){
+                                    data_bd   = data_bd = new Date(data_bd);
+                                    dia_atual = data_atual.getDate();
+                                    mes_atual = data_atual.getMonth();
+                                    dia_pago  = data_bd.getDate();
+                                    mes_pago  = data_bd.getMonth();
+
+                                    //verificando atraso
+                                    if(((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & dia_atual > dia_pagamento) || mes_atual > mes_pago+1 || (mes_pago == 10 & mes_atual >= 0) ||  (mes_pago == 11 & mes_atual >= 1)){
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-atrasado";
+                                        div.innerHTML = "<font color='#fd6e5e'>atrasado</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //verificando em aberto
+                                    else if((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & ((dia_atual >= dia_pagamento-2 & dia_atual <= dia_pagamento) || (mes_atual == 1 & dia_atual >=26 & dia_pagamento == 30)) ){
+                                        var div = document.createElement("div");
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //sobra o que foi pago
+                                    else{
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-realizado";
+                                        div.innerHTML = "<font color='#02bc7d'>pago</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+
+                                }else{
+                                    var div = document.createElement("div");
+                                    document.getElementById("{{cliente[6]}}").appendChild(div);
+                                }
+                            </script>
+                            <input type="text" class="porcentagem" onkeyup="digitar_valor(event)">
+                            <div class="valor-pagar">R$ 0,00</div>
+                            <div style="display: none;">{{cliente[2]}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div id="dia30" class="conteudo-aba">
+                {% for cliente in dia30: %}
+                    <div class="cliente">
+                        <div>
+                            <form method="post">
+                                <input type="checkbox" class="" onchange="verificar_checagem(event)">
+                                <input type="hidden" class="" value={{cliente[6]}}>
+                                <button type="submit" class="bt-cliente" onclick="cliente_selecionado(event)" >{{cliente[0]}}</button>
+                            </form>
+                        </div>
+                        <div class="cliente-direito" id="{{cliente[6]}}">
+                            <script>
+                                var nome = "{{cliente[0]}}";
+                                var dia_pagamento = parseInt("{{cliente[3]}}");
+                                var data_bd = "{{cliente[5]}} 00:00:00"; //{{cliente[5]}}
+                                var data_atual = new Date();
+
+                                if(!(data_bd.includes("None"))){
+                                    data_bd   = data_bd = new Date(data_bd);
+                                    dia_atual = data_atual.getDate();
+                                    mes_atual = data_atual.getMonth();
+                                    dia_pago  = data_bd.getDate();
+                                    mes_pago  = data_bd.getMonth();
+
+                                    //verificando atraso
+                                    if(((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & dia_atual > dia_pagamento) || mes_atual > mes_pago+1 || (mes_pago == 10 & mes_atual >= 0) ||  (mes_pago == 11 & mes_atual >= 1)){
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-atrasado";
+                                        div.innerHTML = "<font color='#fd6e5e'>atrasado</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //verificando em aberto
+                                    else if((mes_atual == mes_pago+1 || (mes_atual == 0 & mes_pago == 11)) & ((dia_atual >= dia_pagamento-2 & dia_atual <= dia_pagamento) || (mes_atual == 1 & dia_atual >=26 & dia_pagamento == 30)) ){
+                                        var div = document.createElement("div");
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+                                    //sobra o que foi pago
+                                    else{
+                                        var div = document.createElement("div");
+                                        div.className = "cliente-pagamento-realizado";
+                                        div.innerHTML = "<font color='#02bc7d'>pago</font>";
+                                        document.getElementById("{{cliente[6]}}").appendChild(div);
+                                    }
+
+                                }else{
+                                    var div = document.createElement("div");
+                                    document.getElementById("{{cliente[6]}}").appendChild(div);
+                                }
+                            </script>
+                            <input type="text" class="porcentagem" onkeyup="digitar_valor(event)">
+                            <div class="valor-pagar">R$ 0,00</div>
+                            <div style="display: none;">{{cliente[2]}}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+            
+    <button type="button" class="bt-externo sair" onclick="deslogar()">Sair</button>
+    <div class="area-janela-confirmacao-home" style="display: none;">
+        <div class="janela-confirmacao-home">
+            <div class="header-janela-home">
+                <div class="titulo-janela-home">Sair</div>
+                <button class="bt-fechar-janela-home" onclick="cancelar()"></button>
+            </div>
+            <form method="post">
+                <div class="content-janela-home">
+                    <input type="hidden" id="sair" name="sair">
+                    <div class="texto-janela-home">Deseja desconectar dessa sessão?</div>
+                    <div class="botoes-janela-home">
+                        <button class="bt-confirma-janela-home" type="submit" onclick="confirma_saida()">Ok</button></form>  
+                        <button class="bt-cancela-janela-home" type="button" onclick="cancelar()">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="area-janela-confirmacao-home alerta" style="display: none;">
+        <div class="janela-confirmacao-home">
+            <div class="header-janela-home">
+                <div class="titulo-janela-home alerta"></div>
+                <button class="bt-fechar-janela-home alerta" onclick="cancelar2()"></button>
+            </div>
+            <form method="post">
+                <div class="content-janela-home">
+                    <div class="texto-janela-home alerta"></div>
+                    <div class="botoes-janela-home">
+                        <button class="bt-confirma-janela-home alerta" type="button" onclick="cancelar2()">Ok</button></form>  
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    var valores = document.getElementsByName("valor")
+    var saldoBTC = valores[0].children[0].innerText;
+    var convercao_USDT = valores[1].innerText;
+    var convercao_BRL = valores[2].innerText;
+
+    var valor_total = document.getElementById("valor-total");
+    valor_total.innerText = new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(0);
+    document.getElementById("default").click();
+
+
+    function deslogar(){
+        document.getElementsByClassName("area-janela-confirmacao-home")[0].style = "display: flex;";
+    }
+
+    function cancelar(){
+        document.getElementsByClassName("area-janela-confirmacao-home")[0].style = "display: none;";
+    }
+
+    function cancelar2(){
+        document.getElementsByClassName("area-janela-confirmacao-home alerta")[0].style = "display: none;";
+    }
+
+    function confirma_saida() {
+        document.getElementById("sair").value = "-1";
+    }
+
+
+    function redirec_add(){
+        document.getElementById("pagina").value = "0";
+    }
+
+    function redirec_pesq(){
+        document.getElementById("pagina").value = "1";
+    }
+
+    function redirec_hist(){
+        document.getElementById("pagina").value = "2";
+    }
+
+
+    function redirec_pagar(){
+        var valor_total = document.getElementById("valor-total").innerText
+        var vt_formatado = valor_total.replace(/[R$.]+/g,"");
+        vt_formatado = Number(vt_formatado.replace(/[,]+/g,"."));
+        
+        var valor_BRL = Number(convercao_BRL.replace(/[R$]+/g,""));
+
+        // if (valor_BRL < vt_formatado){
+        //     document.getElementsByClassName("area-janela-confirmacao-home alerta")[0].style = "display: flex";
+        //     document.getElementsByClassName("titulo-janela-home alerta")[0].innerText = "Saldo insuficiente"
+        //     document.getElementsByClassName("texto-janela-home alerta")[0].innerText = "O saldo da carteira é insuficiente para a realização dos pagamentos"
+        // }
+
+        // else{
+            document.getElementById("pagina").value = "3";
+
+            var checados = document.getElementsByClassName("checado");
+            var id_clientes = [];
+            
+            for (var i = 0; i < checados.length; i++){
+                var valor = checados[i].parentElement.parentElement.parentElement.children[1].children[3].innerText
+                var v_formatado = valor.replace(/[R$.]+/g,"");
+                v_formatado = Number(v_formatado.replace(/[,]+/g,"."));
+                id_clientes.push([checados[i].parentElement.children[1].value, v_formatado])
+            }
+            document.getElementById("id_clientes").value = id_clientes
+            document.getElementById("pagar-submit").click();
+        // }
+    }
+
+    function revela_esconde_valores(botao) {
+        var botao = document.getElementsByClassName("bt revela-esconde-valores")
+        var lista_valores = document.getElementsByName("valor");
+
+        if (botao[0].className.includes("view")){
+            botao[0].className = "bt revela-esconde-valores hide"
+
+            lista_valores[0].children[0].innerText = "**********"
+            lista_valores[1].innerText = "**********";
+            lista_valores[2].innerText = "**********";
+
+        } else{
+            botao[0].className = "bt revela-esconde-valores view"
+
+            lista_valores[0].children[0].innerText = saldoBTC
+            lista_valores[1].innerText = convercao_USDT;
+            lista_valores[2].innerText = convercao_BRL;
+        }
+    }
+
+    function selecionar_aba(evt,aba) {
+        var checkbox = document.getElementById("checkbox-seleciona-todos");
+        if (checkbox.checked){ checkbox.checked = false}
+        var lista_checados = document.getElementsByClassName("checado");
+        for (var i = lista_checados.length; i > 0; i--){
+            lista_checados[i-1].click();
+        }
+        document.getElementsByClassName("opcoes-direito")[0].children[0].value = "";
+        document.getElementById("bt-aplicar-todos").click();
+
+        var i, conteudo_aba, link_aba;
+        conteudo_aba = document.getElementsByClassName("conteudo-aba");
+        for (i = 0; i < conteudo_aba.length; i++) {
+            conteudo_aba[i].style.display = "none";
+            conteudo_aba[i].className = "conteudo-aba"
+        }
+        link_aba = document.getElementsByClassName("link-aba");
+        for (i = 0; i < link_aba.length; i++) {
+            link_aba[i].className = link_aba[i].className.replace(" active", "");
+        }
+        document.getElementById(aba).style.display = "block";
+        document.getElementById(aba).className += " ativo"
+        evt.currentTarget.className += " active";
+    }
+
+    function operacoes_cotacoes(valor1, valor2, op){
+        var v1 = valor1.replace(/[R$.]+/g,"");
+        v1 = Number(v1.replace(/[,]+/g,"."));
+        var v2 = valor2.replace(/[R$.]+/g,"");
+        v2 = Number(v2.replace(/[,]+/g,"."));
+
+        if (op == 0){
+            return new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(v1 + v2);
+        }else{
+            return new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(v2 - v1);
+        }
+    }
+
+    function verificar_checagem(evt){
+        if (evt.currentTarget.checked){ 
+            evt.currentTarget.className += " checado";
+
+            var valor = evt.currentTarget.parentElement.parentElement.parentElement.children[1].children[3].innerText;
+            var valor2 = valor_total.innerText;
+            
+            valor_total.innerHTML = operacoes_cotacoes(valor,valor2,0);
+            
+            var selecionados = document.getElementById("selecionados");
+            qnt = parseInt(selecionados.innerText) + 1;
+            selecionados.innerText = qnt;
+
+        }
+        else{ 
+            var checkbox_todos = document.getElementById("checkbox-seleciona-todos");
+            if (checkbox_todos.checked) checkbox_todos.checked = false;
+            evt.currentTarget.className = "";
+
+            var valor = evt.currentTarget.parentElement.parentElement.parentElement.children[1].children[3].innerText;
+            var valor2 = valor_total.innerText;
+
+            valor_total.innerHTML = operacoes_cotacoes(valor,valor2,1);
+
+            var selecionados = document.getElementById("selecionados");
+            qnt = parseInt(selecionados.innerText) - 1;
+            selecionados.innerText = qnt;
+        }
+        bloqueia_desbloqueia_bt_pagar();
+    }
+
+    function formata_valor(evt){
+        var valor = evt.currentTarget.value
+        valor = parseInt(valor.replace(/[\D]+/g, ''));
+        evt.currentTarget.value = valor;
+        if(evt.currentTarget.value == 'NaN') evt.currentTarget.value = '';
+    }
+
+    function digitar_valor(evt) {
+        // formata_valor(evt);
+
+        var porcentagem = evt.currentTarget.value.replace(",",".");
+        var valor_contrato = evt.currentTarget.parentElement.children[4].innerText; 
+        var valor_anterior = evt.currentTarget.parentElement.children[3].innerText
+
+        var pagamento = valor_contrato * porcentagem/100;
+        pagamento = new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(pagamento);
+
+        if (evt.currentTarget.parentElement.parentElement.children[0].children[0].children[0].checked){
+            valor_total.innerHTML = operacoes_cotacoes(valor_anterior,valor_total.innerText,1);
+            valor_total.innerHTML = operacoes_cotacoes(pagamento,valor_total.innerText,0);
+        }
+
+        evt.currentTarget.parentElement.children[3].innerText = pagamento;
+        bloqueia_desbloqueia_bt_pagar();
+    }
+
+    function aplicar_todos(evt){
+        var lista_clientes = document.getElementsByClassName("conteudo-aba ativo")[0].children;
+        var porcentagem = evt.currentTarget.parentElement.children[0].value;
+        var valor_contrato, pagamento;
+
+        for (let i = 0; i < lista_clientes.length; i = i + 1){
+            lista_clientes[i].children[1].children[2].value = porcentagem;
+            
+            valor_contrato = lista_clientes[i].children[1].children[4].innerText;
+            valor_anterior = lista_clientes[i].children[1].children[3].innerText;
+            pagamento = valor_contrato * porcentagem.replace(",",".")/100;
+            pagamento = new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(pagamento);
+
+            if (lista_clientes[i].children[0].children[0].children[0].checked){
+                valor_total.innerHTML = operacoes_cotacoes(valor_anterior,valor_total.innerText,1);
+                valor_total.innerHTML = operacoes_cotacoes(pagamento,valor_total.innerText,0);
+            }
+
+            lista_clientes[i].children[1].children[3].innerText = pagamento;
+        }
+        bloqueia_desbloqueia_bt_pagar();
+    }
+
+    function selcionar_todos(evt){
+        if (evt.currentTarget.checked){
+            var lista_clientes = document.getElementsByClassName("conteudo-aba ativo")[0].children;
+
+            for (let i = 0; i < lista_clientes.length; i = i + 1){
+                var cliente = lista_clientes[i].children[0].children[0].children[0];
+                if(!cliente.checked) cliente.click();
+            }
+        }else{
+            var lista_clientes = document.getElementsByClassName("conteudo-aba ativo")[0].children;
+
+            for (let i = 0; i < lista_clientes.length; i = i + 1){
+                var cliente = lista_clientes[i].children[0].children[0].children[0];
+                if(cliente.checked) cliente.click();
+            }
+        }
+    }
+
+    function cliente_selecionado(evt){
+        evt.currentTarget.parentElement.children[1].name = "id";
+    }
+
+    function importar(){
+        document.getElementById("arquivo").click();
+    }
+    
+    function importarSubmit(evt){
+        if (!evt.currentTarget.value.includes(".dbjb")){
+            evt.currentTarget.value = '';
+
+            document.getElementsByClassName("area-janela-confirmacao-home alerta")[0].style = "display: flex";
+            document.getElementsByClassName("titulo-janela-home alerta")[0].innerText = "Formato de arquivo incorreto"
+            document.getElementsByClassName("texto-janela-home alerta")[0].innerText = "O arquivo precisa ser conter a extensão .dbjb!"            
+        }else{
+            document.getElementsByClassName("area-janela-confirmacao-home alerta")[0].style = "display: flex";
+            document.getElementsByClassName("titulo-janela-home alerta")[0].innerText = "Carregando"
+            document.getElementsByClassName("texto-janela-home alerta")[0].innerText = "Carregando todos os dados do arquivo"
+            document.getElementsByClassName("bt-fechar-janela-home alerta")[0].style = "display: none;"
+            document.getElementsByClassName("bt-confirma-janela-home alerta")[0].style = "display: none;"
+            document.getElementById("importar_submit").click();
+        }
+    }
+
+    function exportar(){
+        var tempLink = document.createElement("a");
+        var bd = document.getElementById("bd").innerText
+
+        console.log(bd);
+
+        var taBlob = new Blob([bd], {type: 'text/plain'});
+
+        tempLink.setAttribute('href', URL.createObjectURL(taBlob));
+        tempLink.setAttribute('download', "clientes.dbjb");
+        tempLink.click();
+        
+        URL.revokeObjectURL(tempLink.href);
+    }
+
+    function bloqueia_desbloqueia_bt_pagar(){
+        var total = document.getElementById("valor-total");
+        var num = new Intl.NumberFormat('pt-BR', { currency: 'BRL', style: 'currency' }).format(0);
+
+        if (total.innerText == num)
+            total.parentElement.children[1].disabled = true;
+        else
+            total.parentElement.children[1].disabled = false;
+    }
+
+</script>
+</html>

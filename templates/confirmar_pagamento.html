@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/meu_estilo.css')}}">
+    <title>Confirmar Pagamento</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type=text/javascript> 
+        $(function() { 
+            $("#obter-codigo").click(
+                function (event) { 
+                    $.getJSON('/gerar_codigo', { },
+                    function(data) {
+
+                    });    
+                return false; 
+            }); 
+        }); 
+    </script> 
+</head>
+<body>
+    <div class="no-alert"></div>
+    <div class="container-pagamento"> 
+        <h1 class="titulo">Confirmar Pagamento</h1>
+        <br>
+        <br>
+        <form method="post">
+        <div class="codigo-confirmacao-area">
+            <input data-bn-type="input" name="codigo" id="codigo" aria-label="Código de Verificação por e-mail" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" class="codigo-confirmacao-input" value="" onkeyup="formata_valor(event)">
+            <button class="bt-obter-codigo" id="obter-codigo" onclick="gerar_codigo(event)">Obter código</button>
+        </div>
+        <button class="bt-enviar" type="submit">Enviar</button>
+        <br>
+        <input type="hidden" name="pagina" id="pagina" value="-1">
+        <button class="pg-confirma-bt-voltar" type="submit" onclick="cancelar()">Cancelar</button>
+        </form>
+    </div>
+
+    <div class="tela-carregamento" id="tela-carregamento" style="display: none;">
+        <div class="carregando" id="carregando"></div>
+    </div>
+</body>
+<script>
+    var erro = "{{erro}}"
+    let tempo_max = "{{tempo_max}}";
+    if (tempo_max > -1){
+        document.getElementById("obter-codigo").disabled = true
+    }
+
+    let tempo_passado  = 0;
+    let tempo_restante = tempo_max;
+
+    let intervalo_tempo = null;
+    iniciar_contagem()
+
+    if (erro == 1){
+        var alerta = document.getElementsByClassName("no-alert")[0]
+        alerta.className = "alert";
+        alerta.innerText = "Código inválido";
+    }
+
+    function para_timer(){
+        clearInterval(intervalo_tempo);
+    }
+
+
+    function iniciar_contagem() {
+        if (tempo_max > -1){
+            intervalo_tempo = setInterval(() => {
+                
+                // The amount of time passed increments by one
+                tempo_passado = tempo_passado += 1;
+                tempo_restante = tempo_max - tempo_passado;
+                
+                // The time left label is updated
+                var botao = document.getElementById("obter-codigo");
+                botao.innerHTML = formatTime(tempo_restante);
+                botao.disabled = true;
+                botao.style = "margin-left: 80px"
+                if (tempo_restante == 0){
+                    botao.innerText = "Obter código";
+                    botao.disabled = false;
+                    botao.style = "margin-left: 10px"
+                    para_timer();
+                }
+            }, 1000);
+        }
+    }
+
+    function formatTime(time) {
+        const minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        if (seconds < 10) {
+            seconds = `0${seconds}`;
+        }
+
+        return `${minutes}:${seconds}`;
+    }
+
+    function gerar_codigo(evt){
+        evt.currentTarget.disabled = true;
+        tempo_max = 60;
+        tempo_passado  = 0;
+        tempo_restante = tempo_max;
+        iniciar_contagem()
+    }
+
+    function cancelar(){
+        document.getElementById("pagina").value = "0"
+        document.getElementById("tela-carregamento").style = "display: flex";
+    }
+
+</script>
+</html>

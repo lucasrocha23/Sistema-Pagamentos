@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/meu_estilo.css')}}">
+    <title>Pesquisar Cliente</title>
+
+</head>
+<body>
+    <form method="post">
+        <input type="hidden" id="voltar" name="voltar" value="0">
+        <button type="submit" class="pg-pesquisar bt-externo voltar" onclick="tela_carregamento()">Voltar</button>
+    </form>
+
+    <div class="container-pesquisar"> 
+        
+        <div class="pg-pesquisar-parte-superior">
+            <form method="post" >
+                <div class="form-barra-pesquisa">
+                    <input type="text" class="barra-pesquisa" name="nome-pesquisa">
+                    <button type="submit" class="bt-pesquisar"></button>
+                </div>
+            </form>
+            <div class="pg-pesquisar-barra"></div>
+        </div>
+        <div class="pg-pesquisar-parte-inferior">
+            {% for cliente in pesquisa: %}
+                <div class="pg-pesquisar-cliente">
+                    <form method="post">
+                        <input type="hidden" name="" value={{cliente[6]}}>
+                        <button type="submit" onclick="cliente_selecionado(event)" class="bt-cliente">{{cliente[0]}}</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="tela-carregamento" id="tela-carregamento" style="display: none;">
+        <div class="carregando" id="carregando"></div>
+    </div>
+</body>
+<script>
+    function cliente_selecionado(evt){
+        evt.currentTarget.parentElement.children[0].name = "id";
+    }
+
+    function tela_carregamento(){
+        document.getElementById("tela-carregamento").style = "display: flex";
+    }
+</script>
+</html>

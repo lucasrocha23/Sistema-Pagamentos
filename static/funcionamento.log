@@ -1,0 +1,74 @@
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 118-543-587
+DEBUG:root:entrou na função home
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:18] "[32mGET /home HTTP/1.1[0m" 302 -
+DEBUG:root:entrou na função login
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:18] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:18] "GET /static/css/meu_estilo.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:19] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+DEBUG:root:entrou na função login
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.binance.com:443
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /api/v3/ping HTTP/1.1" 200 2
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /sapi/v1/account/status?timestamp=1687203031703&signature=b9afbed93d0c40cc4ec785ab9d4339f01824e54c896eca7170bbb3990bee0edf HTTP/1.1" 200 17
+INFO:root:login efetuado
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "[32mPOST /login HTTP/1.1[0m" 302 -
+DEBUG:root:entrou na função home
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /api/v3/account?timestamp=1687203032041&signature=efed93d23c5c50ca7ea90419f1659ee9a4ed71d7b90e3c99e7df0726b9d092cf HTTP/1.1" 200 2390
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /api/v3/avgPrice?symbol=BTCUSDT HTTP/1.1" 200 35
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /api/v3/avgPrice?symbol=BTCBRL HTTP/1.1" 200 36
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "GET /home HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "[36mGET /static/css/meu_estilo.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "GET /static/css/imagens/add.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "GET /static/css/imagens/view.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "GET /static/css/imagens/search.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "GET /static/css/imagens/history.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:32] "GET /static/css/imagens/check2.png HTTP/1.1" 200 -
+DEBUG:root:entrou na função home
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:40] "[32mPOST /home HTTP/1.1[0m" 302 -
+DEBUG:root:entoru na função historico
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:40] "GET /historico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:40] "[36mGET /static/css/meu_estilo.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:41] "GET /static/css/imagens/search14px.png HTTP/1.1" 200 -
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:43] "GET /pesquisar_historico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:43] "POST /pesquisar_historico HTTP/1.1" 200 -
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:50] "GET /pesquisar_historico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:50] "POST /pesquisar_historico HTTP/1.1" 200 -
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:52] "GET /pesquisar_historico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:52] "POST /pesquisar_historico HTTP/1.1" 200 -
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:54] "GET /pesquisar_historico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:54] "POST /pesquisar_historico HTTP/1.1" 200 -
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+DEBUG:root:entoru na função pagamentos pesquisar_historico
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:56] "GET /pesquisar_historico HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:56] "POST /pesquisar_historico HTTP/1.1" 200 -
+DEBUG:root:entoru na função historico
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:30:59] "[32mPOST /historico HTTP/1.1[0m" 302 -
+DEBUG:root:entrou na função home
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /api/v3/account?timestamp=1687203059216&signature=af16fed56a58001ed83ba253514276fd8fd8574021519982f4e7028f71317ec7 HTTP/1.1" 200 2390
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /api/v3/avgPrice?symbol=BTCUSDT HTTP/1.1" 200 35
+DEBUG:urllib3.connectionpool:https://api.binance.com:443 "GET /api/v3/avgPrice?symbol=BTCBRL HTTP/1.1" 200 36
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:00] "GET /home HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:00] "[36mGET /static/css/meu_estilo.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:00] "[36mGET /static/css/imagens/view.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:00] "[36mGET /static/css/imagens/add.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:00] "[36mGET /static/css/imagens/search.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:00] "[36mGET /static/css/imagens/history.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:00] "[36mGET /static/css/imagens/check2.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:38] "GET /static/css/imagens/close.png HTTP/1.1" 200 -
+DEBUG:root:entrou na função home
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:39] "[32mPOST /home HTTP/1.1[0m" 302 -
+DEBUG:root:entrou na função login
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:39] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [19/Jun/2023 16:31:39] "[36mGET /static/css/meu_estilo.css HTTP/1.1[0m" 304 -
